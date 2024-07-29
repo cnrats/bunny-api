@@ -1,5 +1,7 @@
 import { StreamAPI } from '../src/modules/StreamAPI';
 import * as dotenv from 'dotenv';
+import fs from 'fs';
+import path from 'path';
 dotenv.config();
 
 const ACCESS_KEY = process.env.ACCESS_KEY as string;
@@ -208,6 +210,21 @@ describe('StreamAPI', () => {
       title: '',
     });
     expect(response.message).toBe('An unexpected error occurred.');
+  });
+
+  it('should upload a video file', async () => {
+    const file = fs.createReadStream(
+      `${path.resolve(__dirname)}/assets/videos/test-video.mp4`
+    );
+    await streamAPI.tusUpload(
+      videoGuid,
+      file,
+      function onProgress() {},
+      function onSucces() {
+        expect(true).toBe(true);
+      },
+      function onError() {}
+    );
   });
 
   it('should get video details', async () => {

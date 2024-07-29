@@ -6,6 +6,9 @@ import {
   IAPIResponse,
   IListResponse,
 } from '../../types';
+import * as tus from 'tus-js-client';
+import crypto from 'crypto';
+import fs from 'fs';
 
 export class StreamAPI {
   private _accessKey: string;
@@ -276,6 +279,46 @@ export class StreamAPI {
       status: response.status,
       message: 'An unexpected error occurred.',
     };
+  }
+
+  public async tusUpload(
+    videoGuid: string,
+    file: fs.ReadStream | Blob,
+    onProgress: (bytesSent: number, bytesTotal: number) => void = () => {},
+    onSucces: () => void = () => {},
+    onError: (error: Error) => void = () => {}
+  ): Promise<void> {
+    const expire = (Math.floor(Date.now() / 1000) + 3600).toString();
+    const signature = crypto
+      .createHash('sha256')
+      .update(this._libraryId + this._accessKey + expire + videoGuid)
+      .digest('hex');
+    const upload = new tus.Upload(file, {
+      endpoint: `${this._apiUrl}/tusupload`,
+      retryDelays: [0, 3000, 5000, 10000, 20000, 60000, 60000],
+      headers: {
+        AuthorizationSignature: signature,
+        AuthorizationExpire: expire,
+        VideoId: videoGuid,
+        LibraryId: this._libraryId.toString(),
+      },
+      onError: (error) => {
+        onError(error);
+      },
+      onProgress: (bytesSent, bytesTotal) => {
+        onProgress(bytesSent, bytesTotal);
+      },
+      onSuccess: () => {
+        onSucces();
+      },
+    });
+
+    upload.findPreviousUploads().then((previousUploads) => {
+      if (previousUploads.length) {
+        upload.resumeFromPreviousUpload(previousUploads[0]);
+      }
+      upload.start();
+    });
   }
 
   public async getVideo(guid: string): Promise<IAPIResponse<IVideoData>> {
