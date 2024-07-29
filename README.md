@@ -2,8 +2,8 @@
 
 A simple api for bunny.net services.
 
-## Included Features :white_check_mark:
-### STREAM API
+## Included Features :white_check_mark:
+### STREAM API
 
 #### Manage Collections
 
@@ -25,7 +25,7 @@ A simple api for bunny.net services.
 
 ### BUNNY.NET API
 
-#### Countries
+#### Countries
 
 - Get Country List
 
@@ -37,7 +37,7 @@ A simple api for bunny.net services.
 
 - Region list
 
-#### Stream Video Library
+#### Stream Video Library
 
 - List Video Libraries
 - Add Video Library
@@ -69,7 +69,7 @@ A simple api for bunny.net services.
 - Delete DNS Record
 - Import DNS Records
 
-#### Pull Zone
+#### Pull Zone
 
 - List Pull Zones
 - Add Pull Zone
