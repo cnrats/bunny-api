@@ -24,7 +24,7 @@ jobs:
         run: npm install
 
       - name: Set version
-        run: npm version patch
+        run: npm version patch --no-git-tag-version
 
       - name: Build project
         run: npm run build:release
