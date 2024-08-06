@@ -3,7 +3,10 @@
 A simple api for bunny.net services.
 
 ## Included Features :white_check_mark:
+
 ### STREAM API
+
+- TUS Resumable Uploads
 
 #### Manage Collections
 
@@ -18,7 +21,6 @@ A simple api for bunny.net services.
 - Get Video
 - List Videos
 - Create Video
-- Update Video
 - Delete Video
 
 ## Planned Features :construction:
@@ -130,12 +132,13 @@ A simple api for bunny.net services.
 #### Browse Files
 
 - List Files
-  ### STREAM API
-- TUS Resumable Uploads
+
+### STREAM API
 
 #### Manage Videos
 
 - Upload Video
+- Update Video
 - Get Video Heatmap
 - Get Video play data
 - Get Video Statistics
@@ -150,3 +153,50 @@ A simple api for bunny.net services.
 #### OEmbed
 
 - OEmbed
+
+## Usage
+
+### Stream API
+
+#### Usage Example
+
+Include in the project
+
+    import { StreamAPI } from 'bunny-api';
+
+Create a StreamAPI object
+
+    const streamAPI = new StreamAPI(ACCESS_KEY, LIBRARY_ID);
+
+Example code: creating a collection
+
+    const response = await streamAPI.createCollection({
+      name: 'Test Collection',
+    });
+
+#### Methods
+
+##### Tus Resumable Uploads
+
+| Method      | Description                | Parameters                                                                                                                               | Response      |
+| ----------- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| tusUpload() | Uploads video file via tus | videoGuid: string, file: fs.ReadStream or Blob, onProgress(bytesSent: number, bytesTotal: number), onSucces: (), onError: (error: Error) | Promise: void |
+
+#### Manage Collections
+
+| Method              | Description                           | Parameters                                                                                                                                                                 | Response                                           |
+| ------------------- | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| getCollection()     | Recives a collection data             | guid: string, includeThumbnails: boolean = false                                                                                                                           | Promise:IAPIResponse:ICollectionData               |
+| updateCollection()  | Updates a collection data             | guid: string, bodyParams: IUpdateCollectionModel                                                                                                                           | Promise:IAPIResponse:ICollectionData               |
+| deleteCollection()  | Deletes a collection                  | guid: string                                                                                                                                                               | Promise:IAPIResponse                               |
+| getCollectionList() | Recives multiple collections and data | page: number or null = null, itemsPerPage: number or null = null, search: string or null = null, orderBy: string or null = null, includeThumbnails: boolean or null = null | Promise:IAPIResponse:IListResponse:ICollectionData |
+| createCollection()  | Creates a collection                  | bodyParams: IUpdateCollectionModel                                                                                                                                         | Promise:IAPIResponse:ICollectionData               |
+
+#### Manage Videos
+
+| Method        | Description                      | Parameters                                                                                                                                                         | Response                                      |
+| ------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------- |
+| getVideo      | Recives a video data             | bodyParams: ICreateVideoModel                                                                                                                                      | Promise:IAPIResponse:IVideoData               |
+| listVideos()  | Recives multiple videos and data | page: number or null = null, itemsPerPage: number or null = null, search: string or null = null, collection: string or null = null, orderBy: string or null = null | Promise:IAPIResponse:IListResponse:IVideoData |
+| createVideo() | Creates a video                  | bodyParams: ICreateVideoModel                                                                                                                                      | Promise:IAPIResponse:IVideoData               |
+| deleteVideo() | Deletes a video                  | guid: string                                                                                                                                                       | Promise:IAPIResponse                          |
